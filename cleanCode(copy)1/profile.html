@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <h1>Welcome to Profile Page</h1>
+    <h2 id="name">Your Full Name is:</h2>
+    <img id="image" />
+    <button onclick="logout()">Logout</button>
+  </body>
+  <script>
+    //     // Parse query string to see if page request is coming from OAuth 2.0 server.
+    //     var params = {};
+    //     var regex = /([^&=]+)=([^&]*)/g, m;
+    //     while (m = regex.exec(location.href)) {
+    //         console.log(m,"regexxxxxxxxxx");
+    //         console.log(decodeURIComponent(m[1]),"decode");
+    //         console.log(decodeURIComponent(m[2]),"decode2");
+    //         params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    //     }
+    //     if (Object.keys(params).length > 0) {
+    //         localStorage.setItem('authInfo', JSON.stringify(params));
+    //     }
+    //    // window.history.pushState({}, document.title, "/" + "profile.html");
+    //     let info = JSON.parse(localStorage.getItem('authInfo'))
+    //     console.log(info,"infoooo");
+    //     console.log(info['access_token'],"accessstoken")
+    //     console.log(info['expires_in'],"express token")
+
+    //     fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    //         headers: {
+    //             "Authorization": `Bearer ${info['access_token']}`
+    //         }
+    //     })
+    //         .then(data => {return data.json()})
+    //         .then((info) => {
+    //             console.log(info,"infofffffffff")
+    //             document.getElementById('name').innerHTML += info.name
+    //             document.getElementById('image').setAttribute('src', info.picture)
+    //         })
+
+    //         fetch("https://gmail.googleapis.com/gmail/v1/users/loveysunshine01@gmail.com/labels", {
+    //         headers: {
+    //             "Authorization": `Bearer ${info['access_token']}`
+    //         }
+    //     })
+    //         .then(data => {return data.json()})
+    //         .then((data) => {
+    //             console.log(JSON.stringify(data.labels),"asdf");
+    //         })
+
+    (async function () {
+      let authorization_code = window.location.search
+        .split("=")[1]
+        .split("&")[0];
+      console.log(authorization_code);
+      const tokens = await fetch(
+        `https://oauth2.googleapis.com/token?code=${authorization_code}&redirect_uri=http://127.0.0.1:5501/profile.html&client_id=100947048399-9fsvaf4u3lg5j7c0hnrbs5rl7496vqo4.apps.googleusercontent.com&client_secret=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&scope=&grant_type=authorization_code`,
+        { method: "POST" }
+      )
+        .then((data) => data.json())
+        .then((data) => {
+          console.log("data",data)
+          return data;
+        });
+
+
+
+      const profile = await fetch(
+        `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${tokens.access_token}`
+      )
+        .then((data) => data.json())
+        .then((data) => {
+          // console.log("profile",profile);
+          return data;
+        });
+
+      const labels = await fetch(
+        `https://gmail.googleapis.com/gmail/v1/users/${profile.email}/labels?access_token=${tokens.access_token}`
+      )
+        .then((data) => data.json())
+        .then((data) => {
+          console.log('.......................');
+          console.log(data, "data.labels");
+          return data.labels;
+        });
+
+        // let refreshToken = `https://oauth2.googleapis.com/token?refresh_token=${tokens.refresh_token}&redirect_uri=http://127.0.0.1:5501/profile.html&client_id=100947048399-9fsvaf4u3lg5j7c0hnrbs5rl7496vqo4.apps.googleusercontent.com&client_secret=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&scope=&grant_type=refresh_token`; 
+        // let RefreshToken = await fetch(refreshToken,{ method: "POST" });
+        // RefreshToken = await RefreshToken.json()
+        // console.log(RefreshToken,"refresh token");
+
+        // let label = [];
+
+        // for(let i=0;i<labels.length;i++){
+        //   label.push(labels[i].name)
+        // };
+
+
+        // labelsofUser = JSON.stringify(label)
+
+        
+
+      const result = await fetch("http://localhost:4007/user", {
+        method: "POST",
+        credentials: "same-origin",
+        referrerPolicy: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fname: profile.name,
+          emailId: profile.email,
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token,
+          expiresIn:tokens.expires_in,
+        }),
+      });
+      // const resultJSON = await result.json();
+      // console.log('.................................................................');
+      // console.log(resultJSON);
+      // const resultlabel = await fetch("http://localhost:4007/label", {
+      //   method: "POST",
+      //   credentials: "same-origin",
+      //   referrerPolicy: "same-origin",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     id: resultJSON,
+      //     labelName: labelsofUser,
+      //   }),
+      // });
+    })();
+
+    // function logout() {
+    //     fetch("https://oauth2.googleapis.com/revoke?token=" + info['access_token'],
+    //         {
+    //             method: 'POST',
+    //             headers: {
+    //                 "Content-type": "application/x-www-form-urlencoded"
+    //             }
+    //         })
+    //         .then((data) => {
+    //             location.href = "http://localhost:5500/index.html"
+    //         })
+  </script>
+</html>

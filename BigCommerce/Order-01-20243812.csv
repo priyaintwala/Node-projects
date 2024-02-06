@@ -1,0 +1,2 @@
+"FulfillmentPartnerCode","OrderNumber","OrderDate","CustomerPO","CustomerTag","CustomerProject","ShippingFirstName","ShippingLastName","ShippingAddress1","ShippingAddress2","ShippingCity","ShippingState","ShippingZip","ShippingCountry","ShippingPhone","LineItemNumber","Quantity","SKU","ManufacturerPartNumber","Cost","Notes"
+"ASI",20243812,"12/06/2022 7:17:57 PM","","","","Alisha","Elliott","600 Apache Trail","","Terrell","TX","75160","United States","9722104892",19580,8,"ASI10-L-001","10-L-001","7.2500",""
